@@ -14,7 +14,10 @@ namespace Higi.Middleware.Webjob
         // AzureWebJobsDashboard and AzureWebJobsStorage
         static void Main()
         {
-            var host = new JobHost();
+            var jobhostConfiguraion = new JobHostConfiguration();
+            jobhostConfiguraion.UseServiceBus();
+
+            var host = new JobHost(jobhostConfiguraion);
             // The following code ensures that the WebJob will be running continuously
             host.RunAndBlock();
         }
