@@ -20,10 +20,12 @@ namespace Higi.Middleware.Webjob
 
         // This function will get triggered/executed when a new message is written 
         // on an Azure Queue called queue.
-        public static async Task ProcessQueueMessage([ServiceBusTrigger("higidemoqueue")] string message, TextWriter log)
+        public static async Task ProcessQueueMessage([ServiceBusTrigger("samplehigiqueue")] string message, TextWriter log)
         {
-            
+
             //log.WriteLine(message);
+
+            Console.WriteLine("Received message from service bus: {0}", message);
 
             User user = JsonConvert.DeserializeObject<User>(message);
 

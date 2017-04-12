@@ -7,61 +7,33 @@
 
             $("#send-status").text("");
 
-            var userId = Number.parseInt($("#message-field").val()) || 0;
+            var userId = Number.parseInt($("#user-id-field").val()) || 0;
 
-            console.log("form submitted. userId = ", message);
+            console.log("form submitted. userId = ", userId);
 
-            sendMessage(message);
+            triggerUserDataUpdate(userId);
 
-            $("#message-field").val("");
+            $("#user-id-field").val("");
 
             event.preventDefault();
             return false;
         });
 
-        $("#btn-get-message").click(function () {
-
-            $("#received-message").text("");
-            $("#receive-status").text("");
-
-            getMessage();
-
-            return false;
-        });
-
     });
 
-    function sendMessage(message) {
+    function triggerUserDataUpdate(userId) {
         $.ajax({
-            "url": "/Home/SendMessage",
+            "url": "http://localhost:50185/api/User/UpdateHealthData",
             "method": "POST",
-            "data": JSON.stringify({ "message": message }),
+            "data": JSON.stringify({ "userId": userId }),
             "contentType": "application/json"
         }).done(function (data) {
-            console.log("Message sent.", data);
+            console.log("Request sent successfully.", data);
 
             $("#send-status").text("Message sent successfully");
 
         }).fail(function () {
-            console.log("Failed to send message sent.");
-        }).always(function () {
-            console.log("completed");
-        });
-    }
-
-    function getMessage() {
-        $.ajax({
-            "url": "/Home/GetMessage",
-            "method": "GET"
-        }).done(function (data) {
-            console.log("Message received.", data);
-
-            $("#receive-status").text("Successfully receive the message");
-            $("#received-message").text(data);
-
-        }).fail(function () {
-            console.log("Failed to receive message.");
-            $("#receive-status").text("Failed to receive message");
+            console.log("Failed to send request.");
         }).always(function () {
             console.log("completed");
         });
