@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Net.Http;
 using System.Configuration;
 using Higi.Middleware.Common;
+using Higi.Middleware.Data;
 
 namespace Higi.Middleware.Webjob
 {
@@ -54,6 +55,28 @@ namespace Higi.Middleware.Webjob
             {
                 //Todo: Make call to client endpoint based on user id
 
+                using (var dbContext = new SampleHigiMiddlewareDBEntities())
+                {
+                    var userMappings = dbContext.Higi_Client_Mappings.Where(m => m.HigiUserId == user.UserId);
+
+                    foreach (var mapping in userMappings)
+                    {
+                        var endpoint = mapping.Target.Endpoint;
+
+                        var content = new StringContent(JsonConvert.SerializeObject(userHealthData), Encoding.UTF8, "application/json");
+
+                        var clientResponse = await httpClient.PostAsync(endpoint, content);
+
+                        if (clientResponse.IsSuccessStatusCode)
+                        {
+                            Console.WriteLine("Successfully called client endpoint. \r\nEndpoint: {0}", endpoint);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Failed to call client endpoint.\r\nEndpoint: {0}", endpoint);
+                        }
+                    }
+                }
             }
 
         }

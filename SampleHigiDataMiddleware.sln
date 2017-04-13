@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CPS.UI", "CPS.UI\CPS.UI.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Higi.Middleware.Common", "Higi.Middleware.Common\Higi.Middleware.Common.csproj", "{69DE8E8A-4722-46E3-A96F-9C134A6CAA60}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Higi.Middleware.Data", "Higi.Middleware.Data\Higi.Middleware.Data.csproj", "{360E018D-E192-432B-AACF-D1A7C497D7AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{69DE8E8A-4722-46E3-A96F-9C134A6CAA60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69DE8E8A-4722-46E3-A96F-9C134A6CAA60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{69DE8E8A-4722-46E3-A96F-9C134A6CAA60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{360E018D-E192-432B-AACF-D1A7C497D7AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{360E018D-E192-432B-AACF-D1A7C497D7AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{360E018D-E192-432B-AACF-D1A7C497D7AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{360E018D-E192-432B-AACF-D1A7C497D7AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="SampleHigiMiddlewareDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Higi_Client_Mappings">
+          <Key>
+            <PropertyRef Name="MapId" />
+          </Key>
+          <Property Name="MapId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ClientId" Type="int" Nullable="false" />
+          <Property Name="HigiUserId" Type="int" Nullable="false" />
+          <Property Name="ClientUserId" Type="int" Nullable="false" />
+          <Property Name="DateTimeCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Target">
+          <Key>
+            <PropertyRef Name="ClientId" />
+          </Key>
+          <Property Name="ClientId" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Token" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="Endpoint" Type="varchar(max)" Nullable="false" />
+          <Property Name="DateTimeCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_ClientID">
+          <End Role="Target" Type="Self.Target" Multiplicity="1" />
+          <End Role="Higi_Client_Mappings" Type="Self.Higi_Client_Mappings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Target">
+              <PropertyRef Name="ClientId" />
+            </Principal>
+            <Dependent Role="Higi_Client_Mappings">
+              <PropertyRef Name="ClientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SampleHigiMiddlewareDBModelStoreContainer">
+          <EntitySet Name="Higi_Client_Mappings" EntityType="Self.Higi_Client_Mappings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Target" EntityType="Self.Target" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ClientID" Association="Self.FK_ClientID">
+            <End Role="Target" EntitySet="Target" />
+            <End Role="Higi_Client_Mappings" EntitySet="Higi_Client_Mappings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SampleHigiMiddlewareDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Higi_Client_Mappings">
+          <Key>
+            <PropertyRef Name="MapId" />
+          </Key>
+          <Property Name="MapId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ClientId" Type="Int32" Nullable="false" />
+          <Property Name="HigiUserId" Type="Int32" Nullable="false" />
+          <Property Name="ClientUserId" Type="Int32" Nullable="false" />
+          <Property Name="DateTimeCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Target" Relationship="Self.FK_ClientID" FromRole="Higi_Client_Mappings" ToRole="Target" />
+        </EntityType>
+        <EntityType Name="Target">
+          <Key>
+            <PropertyRef Name="ClientId" />
+          </Key>
+          <Property Name="ClientId" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Token" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Endpoint" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DateTimeCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="Higi_Client_Mappings" Relationship="Self.FK_ClientID" FromRole="Target" ToRole="Higi_Client_Mappings" />
+        </EntityType>
+        <Association Name="FK_ClientID">
+          <End Role="Target" Type="Self.Target" Multiplicity="1" />
+          <End Role="Higi_Client_Mappings" Type="Self.Higi_Client_Mappings" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Target">
+              <PropertyRef Name="ClientId" />
+            </Principal>
+            <Dependent Role="Higi_Client_Mappings">
+              <PropertyRef Name="ClientId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="SampleHigiMiddlewareDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Higi_Client_Mappings" EntityType="Self.Higi_Client_Mappings" />
+          <EntitySet Name="Targets" EntityType="Self.Target" />
+          <AssociationSet Name="FK_ClientID" Association="Self.FK_ClientID">
+            <End Role="Target" EntitySet="Targets" />
+            <End Role="Higi_Client_Mappings" EntitySet="Higi_Client_Mappings" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SampleHigiMiddlewareDBModelStoreContainer" CdmEntityContainer="SampleHigiMiddlewareDBEntities">
+          <EntitySetMapping Name="Higi_Client_Mappings">
+            <EntityTypeMapping TypeName="SampleHigiMiddlewareDBModel.Higi_Client_Mappings">
+              <MappingFragment StoreEntitySet="Higi_Client_Mappings">
+                <ScalarProperty Name="MapId" ColumnName="MapId" />
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="HigiUserId" ColumnName="HigiUserId" />
+                <ScalarProperty Name="ClientUserId" ColumnName="ClientUserId" />
+                <ScalarProperty Name="DateTimeCreated" ColumnName="DateTimeCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Targets">
+            <EntityTypeMapping TypeName="SampleHigiMiddlewareDBModel.Target">
+              <MappingFragment StoreEntitySet="Target">
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Token" ColumnName="Token" />
+                <ScalarProperty Name="Endpoint" ColumnName="Endpoint" />
+                <ScalarProperty Name="DateTimeCreated" ColumnName="DateTimeCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
