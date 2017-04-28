@@ -1,4 +1,5 @@
 ﻿using Higi.Middleware.Common;
+using Higi.Middleware.Data;
 using Microsoft.Azure;
 using Microsoft.ServiceBus.Messaging;
 using Newtonsoft.Json;
@@ -27,9 +28,37 @@ namespace Higi.Middleware.API.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> UpdateHealthData(User user)
         {
-            var message = JsonConvert.SerializeObject(user);
+            var userDataUpdateMessage = new UserDataUpdateMessage
+            {
+                UserId = user.UserId
+            };
+
+            using (var dbContext = new SampleHigiMiddlewareDBEntities())
+            {
+                var queueMessage = new QueueMessageStatu
+                {
+                    HigiUserId = user.UserId,
+                    Status = UserDataUpdateStatus.MiddlewareReceived,
+                    DateTimeCreated = DateTime.Now
+                };
+
+                dbContext.QueueMessageStatus.Add(queueMessage);
+                await dbContext.SaveChangesAsync();
+
+                userDataUpdateMessage.MessageId = queueMessage.MessageId;
+            }
+
+            var message = JsonConvert.SerializeObject(userDataUpdateMessage);
 
             await this.queueClient.SendAsync(new BrokeredMessage(message));
+
+            using (var dbContext = new SampleHigiMiddlewareDBEntities())
+            {
+                var queueMessage = await dbContext.QueueMessageStatus.FindAsync(userDataUpdateMessage.MessageId);
+                queueMessage.Status = UserDataUpdateStatus.Queued;
+
+                await dbContext.SaveChangesAsync();
+            }
 
             return Ok();
         }

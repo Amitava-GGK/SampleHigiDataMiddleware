@@ -4,7 +4,19 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="SampleHigiMiddlewareDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="SampleHigiMiddlewareDBModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ClientRequestResponse">
+          <Key>
+            <PropertyRef Name="Mapping_ID" />
+          </Key>
+          <Property Name="Mapping_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MessageId" Type="int" />
+          <Property Name="Request" Type="nvarchar(max)" />
+          <Property Name="Response" Type="nvarchar(max)" />
+          <Property Name="status" Type="varchar" MaxLength="15" />
+          <Property Name="DateTimeCreated" Type="datetime" />
+          <Property Name="ClientId" Type="int" />
+        </EntityType>
         <EntityType Name="Higi_Client_Mappings">
           <Key>
             <PropertyRef Name="MapId" />
@@ -13,6 +25,26 @@
           <Property Name="ClientId" Type="int" Nullable="false" />
           <Property Name="HigiUserId" Type="int" Nullable="false" />
           <Property Name="ClientUserId" Type="int" Nullable="false" />
+          <Property Name="DateTimeCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="HigiRequestResponse">
+          <Key>
+            <PropertyRef Name="Mapping_ID" />
+          </Key>
+          <Property Name="Mapping_ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MessageId" Type="int" />
+          <Property Name="Request" Type="nvarchar(max)" />
+          <Property Name="Response" Type="nvarchar(max)" />
+          <Property Name="status" Type="varchar" MaxLength="15" />
+          <Property Name="DateTimeCreated" Type="datetime" />
+        </EntityType>
+        <EntityType Name="QueueMessageStatus">
+          <Key>
+            <PropertyRef Name="MessageId" />
+          </Key>
+          <Property Name="MessageId" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="HigiUserId" Type="int" Nullable="false" />
+          <Property Name="Status" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="DateTimeCreated" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Target">
@@ -37,16 +69,50 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ClientRequestResponse_QueueMessageStatus">
+          <End Role="QueueMessageStatus" Type="Self.QueueMessageStatus" Multiplicity="0..1" />
+          <End Role="ClientRequestResponse" Type="Self.ClientRequestResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QueueMessageStatus">
+              <PropertyRef Name="MessageId" />
+            </Principal>
+            <Dependent Role="ClientRequestResponse">
+              <PropertyRef Name="MessageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HigiRequestResponse_QueueMessageStatus">
+          <End Role="QueueMessageStatus" Type="Self.QueueMessageStatus" Multiplicity="0..1" />
+          <End Role="HigiRequestResponse" Type="Self.HigiRequestResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QueueMessageStatus">
+              <PropertyRef Name="MessageId" />
+            </Principal>
+            <Dependent Role="HigiRequestResponse">
+              <PropertyRef Name="MessageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="SampleHigiMiddlewareDBModelStoreContainer">
+          <EntitySet Name="ClientRequestResponse" EntityType="Self.ClientRequestResponse" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Higi_Client_Mappings" EntityType="Self.Higi_Client_Mappings" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HigiRequestResponse" EntityType="Self.HigiRequestResponse" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QueueMessageStatus" EntityType="Self.QueueMessageStatus" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Target" EntityType="Self.Target" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_ClientID" Association="Self.FK_ClientID">
             <End Role="Target" EntitySet="Target" />
             <End Role="Higi_Client_Mappings" EntitySet="Higi_Client_Mappings" />
           </AssociationSet>
+          <AssociationSet Name="FK_ClientRequestResponse_QueueMessageStatus" Association="Self.FK_ClientRequestResponse_QueueMessageStatus">
+            <End Role="QueueMessageStatus" EntitySet="QueueMessageStatus" />
+            <End Role="ClientRequestResponse" EntitySet="ClientRequestResponse" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HigiRequestResponse_QueueMessageStatus" Association="Self.FK_HigiRequestResponse_QueueMessageStatus">
+            <End Role="QueueMessageStatus" EntitySet="QueueMessageStatus" />
+            <End Role="HigiRequestResponse" EntitySet="HigiRequestResponse" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SampleHigiMiddlewareDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -91,7 +157,78 @@
             <End Role="Target" EntitySet="Targets" />
             <End Role="Higi_Client_Mappings" EntitySet="Higi_Client_Mappings" />
           </AssociationSet>
+          <EntitySet Name="ClientRequestResponses" EntityType="SampleHigiMiddlewareDBModel.ClientRequestResponse" />
+          <EntitySet Name="HigiRequestResponses" EntityType="SampleHigiMiddlewareDBModel.HigiRequestResponse" />
+          <EntitySet Name="QueueMessageStatus" EntityType="SampleHigiMiddlewareDBModel.QueueMessageStatu" />
+          <AssociationSet Name="FK_ClientRequestResponse_QueueMessageStatus" Association="SampleHigiMiddlewareDBModel.FK_ClientRequestResponse_QueueMessageStatus">
+            <End Role="QueueMessageStatu" EntitySet="QueueMessageStatus" />
+            <End Role="ClientRequestResponse" EntitySet="ClientRequestResponses" />
+          </AssociationSet>
+          <AssociationSet Name="FK_HigiRequestResponse_QueueMessageStatus" Association="SampleHigiMiddlewareDBModel.FK_HigiRequestResponse_QueueMessageStatus">
+            <End Role="QueueMessageStatu" EntitySet="QueueMessageStatus" />
+            <End Role="HigiRequestResponse" EntitySet="HigiRequestResponses" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="ClientRequestResponse">
+          <Key>
+            <PropertyRef Name="Mapping_ID" />
+          </Key>
+          <Property Name="Mapping_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MessageId" Type="Int32" />
+          <Property Name="Request" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="DateTimeCreated" Type="DateTime" Precision="3" />
+          <Property Name="ClientId" Type="Int32" />
+          <NavigationProperty Name="QueueMessageStatu" Relationship="SampleHigiMiddlewareDBModel.FK_ClientRequestResponse_QueueMessageStatus" FromRole="ClientRequestResponse" ToRole="QueueMessageStatu" />
+        </EntityType>
+        <EntityType Name="HigiRequestResponse">
+          <Key>
+            <PropertyRef Name="Mapping_ID" />
+          </Key>
+          <Property Name="Mapping_ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MessageId" Type="Int32" />
+          <Property Name="Request" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Response" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="DateTimeCreated" Type="DateTime" Precision="3" />
+          <NavigationProperty Name="QueueMessageStatu" Relationship="SampleHigiMiddlewareDBModel.FK_HigiRequestResponse_QueueMessageStatus" FromRole="HigiRequestResponse" ToRole="QueueMessageStatu" />
+        </EntityType>
+        <EntityType Name="QueueMessageStatu">
+          <Key>
+            <PropertyRef Name="MessageId" />
+          </Key>
+          <Property Name="MessageId" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HigiUserId" Type="Int32" Nullable="false" />
+          <Property Name="Status" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateTimeCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="ClientRequestResponses" Relationship="SampleHigiMiddlewareDBModel.FK_ClientRequestResponse_QueueMessageStatus" FromRole="QueueMessageStatu" ToRole="ClientRequestResponse" />
+          <NavigationProperty Name="HigiRequestResponses" Relationship="SampleHigiMiddlewareDBModel.FK_HigiRequestResponse_QueueMessageStatus" FromRole="QueueMessageStatu" ToRole="HigiRequestResponse" />
+        </EntityType>
+        <Association Name="FK_ClientRequestResponse_QueueMessageStatus">
+          <End Type="SampleHigiMiddlewareDBModel.QueueMessageStatu" Role="QueueMessageStatu" Multiplicity="0..1" />
+          <End Type="SampleHigiMiddlewareDBModel.ClientRequestResponse" Role="ClientRequestResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QueueMessageStatu">
+              <PropertyRef Name="MessageId" />
+            </Principal>
+            <Dependent Role="ClientRequestResponse">
+              <PropertyRef Name="MessageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_HigiRequestResponse_QueueMessageStatus">
+          <End Type="SampleHigiMiddlewareDBModel.QueueMessageStatu" Role="QueueMessageStatu" Multiplicity="0..1" />
+          <End Type="SampleHigiMiddlewareDBModel.HigiRequestResponse" Role="HigiRequestResponse" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QueueMessageStatu">
+              <PropertyRef Name="MessageId" />
+            </Principal>
+            <Dependent Role="HigiRequestResponse">
+              <PropertyRef Name="MessageId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -117,6 +254,41 @@
                 <ScalarProperty Name="Token" ColumnName="Token" />
                 <ScalarProperty Name="Endpoint" ColumnName="Endpoint" />
                 <ScalarProperty Name="DateTimeCreated" ColumnName="DateTimeCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ClientRequestResponses">
+            <EntityTypeMapping TypeName="SampleHigiMiddlewareDBModel.ClientRequestResponse">
+              <MappingFragment StoreEntitySet="ClientRequestResponse">
+                <ScalarProperty Name="ClientId" ColumnName="ClientId" />
+                <ScalarProperty Name="DateTimeCreated" ColumnName="DateTimeCreated" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="Response" ColumnName="Response" />
+                <ScalarProperty Name="Request" ColumnName="Request" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="Mapping_ID" ColumnName="Mapping_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HigiRequestResponses">
+            <EntityTypeMapping TypeName="SampleHigiMiddlewareDBModel.HigiRequestResponse">
+              <MappingFragment StoreEntitySet="HigiRequestResponse">
+                <ScalarProperty Name="DateTimeCreated" ColumnName="DateTimeCreated" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="Response" ColumnName="Response" />
+                <ScalarProperty Name="Request" ColumnName="Request" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
+                <ScalarProperty Name="Mapping_ID" ColumnName="Mapping_ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QueueMessageStatus">
+            <EntityTypeMapping TypeName="SampleHigiMiddlewareDBModel.QueueMessageStatu">
+              <MappingFragment StoreEntitySet="QueueMessageStatus">
+                <ScalarProperty Name="DateTimeCreated" ColumnName="DateTimeCreated" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="HigiUserId" ColumnName="HigiUserId" />
+                <ScalarProperty Name="MessageId" ColumnName="MessageId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

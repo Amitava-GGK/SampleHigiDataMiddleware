@@ -27,5 +27,8 @@ namespace Higi.Middleware.Data
     
         public virtual DbSet<Higi_Client_Mappings> Higi_Client_Mappings { get; set; }
         public virtual DbSet<Target> Targets { get; set; }
+        public virtual DbSet<ClientRequestResponse> ClientRequestResponses { get; set; }
+        public virtual DbSet<HigiRequestResponse> HigiRequestResponses { get; set; }
+        public virtual DbSet<QueueMessageStatu> QueueMessageStatus { get; set; }
     }
 }
